@@ -23,9 +23,9 @@ namespace HotelListing.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetHotels()
+        public async Task<IActionResult> GetHotels([FromQuery] RequestParams requestParams)
         {
-            var hotels = await _unitOfWork.Hotels.GetAll();
+            var hotels = await _unitOfWork.Hotels.GetPagedList(requestParams);
             var results = _mapper.Map<IList<HotelDTO>>(hotels);
             return Ok(results);
         }

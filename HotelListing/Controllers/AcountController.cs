@@ -110,53 +110,52 @@ namespace HotelListing.Controllers
         public string CreateJwtToken(string user)
         {
 
-            var issuer = _configuration.GetSection("Jwt:Issuer").Value;
-            var audience = _configuration.GetSection("Jwt:Audience").Value;
-            var key = Encoding.ASCII.GetBytes
-            (_configuration.GetSection("Jwt:Key").Value);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                new Claim("Id", Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user),
-                new Claim(JwtRegisteredClaimNames.Email, user),
-                new Claim(JwtRegisteredClaimNames.Jti,
-                Guid.NewGuid().ToString())
-             }),
-
-                Expires = DateTime.UtcNow.AddMinutes(5),
-                Issuer = issuer,
-                Audience = audience,
-                SigningCredentials = new SigningCredentials
-                (new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha512Signature)
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var jwtToken = tokenHandler.WriteToken(token);
-            var stringToken = tokenHandler.WriteToken(token);
-            return stringToken;
-
-            //List<Claim> claims = new List<Claim>
+            //var issuer = _configuration.GetSection("Jwt:Issuer").Value;
+            //var audience = _configuration.GetSection("Jwt:Audience").Value;
+            //var key = Encoding.ASCII.GetBytes
+            //(_configuration.GetSection("Jwt:Key").Value);
+            //var tokenDescriptor = new SecurityTokenDescriptor
             //{
-            //    new Claim(ClaimTypes.Name, user),
-            //    new Claim(ClaimTypes.Role, "Admin")
+            //    Subject = new ClaimsIdentity(new[]
+            //    {
+            //    new Claim("Id", Guid.NewGuid().ToString()),
+            //    new Claim(JwtRegisteredClaimNames.Sub, user),
+            //    new Claim(JwtRegisteredClaimNames.Email, user),
+            //    new Claim(JwtRegisteredClaimNames.Jti,
+            //    Guid.NewGuid().ToString())
+            // }),
+
+            //    Expires = DateTime.UtcNow.AddMinutes(5),
+            //    Issuer = issuer,
+            //    Audience = audience,
+            //    SigningCredentials = new SigningCredentials
+            //    (new SymmetricSecurityKey(key),
+            //    SecurityAlgorithms.HmacSha512Signature)
             //};
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var token = tokenHandler.CreateToken(tokenDescriptor);
+            //var jwtToken = tokenHandler.WriteToken(token);
+            //return jwtToken;
 
-            //var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-            //    _configuration.GetSection("Jwt:Key").Value));
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user),
+                new Claim(ClaimTypes.Role, "Admin")
+            };
 
-            //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                _configuration.GetSection("Jwt:Key").Value));
 
-            //var token = new JwtSecurityToken(
-            //    claims: claims,
-            //    expires: DateTime.Now.AddDays(1),
-            //    signingCredentials: creds);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            //var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
 
-            //return jwt;
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
         }
     }
 }
